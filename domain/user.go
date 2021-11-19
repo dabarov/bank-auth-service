@@ -1,7 +1,7 @@
 package domain
 
 type User struct {
-	IIN       int64  `json:"iin"`
+	IIN       uint64 `json:"iin"`
 	Login     string `json:"login"`
 	Password  string `json:"password"`
 	Name      string `json:"name"`
