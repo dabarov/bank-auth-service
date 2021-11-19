@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/dabarov/online-banking/domain"
@@ -28,6 +30,16 @@ func extractCredential(ctx *fasthttp.RequestCtx) (login string, pass string) {
 }
 
 func (s *MyRESTServer) SignUp(ctx *fasthttp.RequestCtx) {
+	s.db.Create(&domain.User{
+		IIN:       binary.BigEndian.Uint64(ctx.FormValue("iin")),
+		Login:     string(ctx.FormValue("login")),
+		Password:  string(ctx.FormValue("password")),
+		Name:      string(ctx.FormValue("name")),
+		Surname:   string(ctx.FormValue("surname")),
+		Phone:     string(ctx.FormValue("phone")),
+		Role:      string(ctx.FormValue("password")),
+		CreatedAt: time.Now().String(),
+	})
 }
 
 func (s *MyRESTServer) SignIn(ctx *fasthttp.RequestCtx) {
