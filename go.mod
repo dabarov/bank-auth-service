@@ -6,8 +6,12 @@ require (
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/valyala/fasthttp v1.31.0
 	gorm.io/gorm v1.22.3
+)
+
+require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.10.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

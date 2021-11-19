@@ -8,6 +8,8 @@ import (
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/dabarov/online-banking/domain"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/go-redis/redis"
 	"github.com/valyala/fasthttp"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,11 +24,19 @@ const (
 )
 
 type MyRESTServer struct {
-	db *gorm.DB
+	db        *gorm.DB
+	secret    string
+	expTime   time.Duration
+	redisConn *redis.Client
 }
 
 func extractCredential(ctx *fasthttp.RequestCtx) (login string, pass string) {
 	return string(ctx.FormValue("login")), string(ctx.FormValue("password"))
+}
+
+func (s *MyRESTServer) insertToken(token string, iin uint64) error {
+	key := fmt.Sprintf("user:%d", iin)
+	return s.redisConn.Set(key, token, s.expTime).Err()
 }
 
 func (s *MyRESTServer) SignUp(ctx *fasthttp.RequestCtx) {
@@ -54,6 +64,26 @@ func (s *MyRESTServer) SignIn(ctx *fasthttp.RequestCtx) {
 		fmt.Fprintf(ctx, "Invalid credentials!")
 		return
 	}
+
+	accessTokenClaims := jwt.MapClaims{}
+	accessTokenClaims["id"] = user.IIN
+	accessTokenClaims["iat"] = time.Now().Unix()
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
+
+	signedToken, err := accessToken.SignedString([]byte(s.secret))
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Coundn't create token. Error: %v", err)
+		return
+	}
+
+	if err := s.insertToken(signedToken, user.IIN); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Coundn't insert token in redis. Error: %v", err)
+		return
+	}
+
+	fmt.Fprintf(ctx, "Token: %s", signedToken)
 }
 
 func main() {
@@ -64,8 +94,22 @@ func main() {
 		return
 	}
 
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	pong, err := client.Ping().Result()
+	if err != nil {
+		log.Fatalf("Ping error: %v", err)
+	}
+	log.Println(pong)
+
 	server := &MyRESTServer{
-		db: db,
+		db:        db,
+		secret:    "18DbJX9NR0WApJtB9OgmQkdlmHLwaHpK",
+		expTime:   20 * time.Second,
+		redisConn: client,
 	}
 	db.AutoMigrate(&domain.User{})
 
