@@ -11,7 +11,7 @@ type postgresqlUserRepository struct {
 	Conn *gorm.DB
 }
 
-func NewMysqlArticleRepository(Conn *gorm.DB) domain.UserRepository {
+func NewPostgresqlUserRepository(Conn *gorm.DB) domain.UserRepository {
 	return &postgresqlUserRepository{Conn}
 }
 
