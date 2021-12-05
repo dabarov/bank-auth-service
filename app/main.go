@@ -44,10 +44,6 @@ func (s *MyRESTServer) SignUp(ctx *fasthttp.RequestCtx) {
 		IIN:       binary.BigEndian.Uint64(ctx.FormValue("iin")),
 		Login:     string(ctx.FormValue("login")),
 		Password:  string(ctx.FormValue("password")),
-		Name:      string(ctx.FormValue("name")),
-		Surname:   string(ctx.FormValue("surname")),
-		Phone:     string(ctx.FormValue("phone")),
-		Role:      string(ctx.FormValue("password")),
 		CreatedAt: time.Now().String(),
 	})
 }
@@ -58,7 +54,7 @@ func (s *MyRESTServer) SignIn(ctx *fasthttp.RequestCtx) {
 	var user domain.User
 	s.db.Where(&domain.User{Login: login, Password: password}).First(&user)
 
-	if user.Name == "" {
+	if user.Login == "" {
 		log.Println("Invalid credentials!")
 		ctx.SetStatusCode(fasthttp.StatusForbidden)
 		fmt.Fprintf(ctx, "Invalid credentials!")
