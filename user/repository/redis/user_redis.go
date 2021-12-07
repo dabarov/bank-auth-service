@@ -42,22 +42,6 @@ func (u *userRedisRepository) GetAccessToken(ctx context.Context, iin string) (s
 	return signedToken, nil
 }
 
-// func (u *userRedisRepository) ExtractToken(ctx *fasthttp.RequestCtx) (token string, err error) {
-// 	header := string(ctx.Request.Header.Peek("Authorization"))
-// 	if header == "" {
-// 		err = fmt.Errorf("authorization header not found")
-// 		return
-// 	}
-// 	parsedHeader := strings.Split(header, " ")
-// 	if len(parsedHeader) != 2 || parsedHeader[0] != "Bearer" {
-// 		err = fmt.Errorf("invalid authorization header")
-// 		return
-// 	}
-
-// 	token = parsedHeader[1]
-// 	return
-// }
-
 func (u *userRedisRepository) ParseToken(token string) (int64, error) {
 	JWTToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
