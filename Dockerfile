@@ -7,6 +7,8 @@ WORKDIR /auth-service
 COPY . /auth-service
 RUN go mod download
 
+WORKDIR /auth-service/app
+
 RUN go build -o auth-service
 RUN chmod 777 auth-service
 
