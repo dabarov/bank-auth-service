@@ -26,3 +26,13 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gorm.io/driver/postgres v1.2.3
 )
+
+require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-redis/redis v6.15.9+incompatible
+)
+
+require (
+	github.com/onsi/ginkgo v1.16.4 // indirect
+	github.com/onsi/gomega v1.16.0 // indirect
+)

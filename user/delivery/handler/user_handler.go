@@ -18,6 +18,7 @@ func NewUserHandler(router *fasthttprouter.Router, userUsecase domain.UserUsecas
 		UserUsecase: userUsecase,
 	}
 	router.POST("/signup", handler.SignUp)
+	router.POST("/signin", handler.SignIn)
 }
 
 func (u *UserHandler) SignUp(ctx *fasthttp.RequestCtx) {
@@ -32,4 +33,16 @@ func (u *UserHandler) SignUp(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", err)
 	}
+}
+
+func (u *UserHandler) SignIn(ctx *fasthttp.RequestCtx) {
+	login := string(ctx.FormValue("login"))
+	password := string(ctx.FormValue("password"))
+
+	token, err := u.UserUsecase.SignIn(ctx, login, password)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", err)
+	}
+	ctx.Request.Header.Set("AccessToken", token)
 }

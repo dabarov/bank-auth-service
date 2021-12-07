@@ -1,6 +1,8 @@
 package domain
 
-import "context"
+import (
+	"context"
+)
 
 type User struct {
 	IIN       string `json:"iin"`
@@ -11,11 +13,16 @@ type User struct {
 
 type UserUsecase interface {
 	SignUp(ctx context.Context, user *User) error
+	SignIn(ctx context.Context, login string, password string) (string, error)
 }
 
 type UserDBRepository interface {
 	SignUp(ctx context.Context, user *User) error
+	SignIn(ctx context.Context, login string, password string) (string, error)
 }
 
 type UserRedisRepository interface {
+	GetAccessToken(ctx context.Context, iin string) (string, error)
+	InsertToken(token string, iin string) error
+	ParseToken(token string) (int64, error)
 }
