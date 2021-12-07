@@ -44,5 +44,6 @@ func (u *UserHandler) SignIn(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", err)
 	}
-	ctx.Request.Header.Set("AccessToken", token)
+
+	ctx.Response.Header.Set("auth", token)
 }
