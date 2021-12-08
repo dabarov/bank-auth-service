@@ -45,8 +45,10 @@ func (u *UserHandler) SignIn(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", err)
 	}
-
-	ctx.Response.Header.Set("auth", token)
+	cookie := fasthttp.Cookie{}
+	cookie.SetKey("AuthToken")
+	cookie.SetValue(token)
+	ctx.Response.Header.SetCookie(&cookie)
 }
 
 func (u *UserHandler) GetUserByIIN(ctx *fasthttp.RequestCtx) {
