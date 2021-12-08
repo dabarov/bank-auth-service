@@ -42,45 +42,15 @@ func (u *userRedisRepository) GetAccessToken(ctx context.Context, iin string) (s
 	return signedToken, nil
 }
 
-func (u *userRedisRepository) ParseToken(token string) (int64, error) {
-	JWTToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("failed to extract token metadata, unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(u.secret), nil
-	})
-
-	if err != nil {
-		return 0, err
-	}
-
-	claims, ok := JWTToken.Claims.(jwt.MapClaims)
-
-	var userId float64
-
-	if ok && JWTToken.Valid {
-		userId, ok = claims["id"].(float64)
-		if !ok {
-			return 0, fmt.Errorf("field id not found")
-		}
-		return int64(userId), nil
-	}
-
-	return 0, fmt.Errorf("invalid token")
-}
-
-func (u *userRedisRepository) FindToken(token string, iin string) bool {
-	key := fmt.Sprintf("user:%s", iin)
-
-	value, err := u.redisClient.Get(key).Result()
-	if err != nil {
-		return false
-	}
-
-	return token == value
-}
-
 func (u *userRedisRepository) InsertToken(token string, iin string) error {
 	key := fmt.Sprintf("user:%s", iin)
 	return u.redisClient.Set(key, token, u.timeout).Err()
+}
+
+func (u *userRedisRepository) GetValue(key string) (string, error) {
+	return u.redisClient.Get(key).Result()
+}
+
+func (u *userRedisRepository) GetSecret() string {
+	return u.secret
 }
