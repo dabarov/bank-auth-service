@@ -14,12 +14,12 @@ type UserHandler struct {
 	userUsecase domain.UserUsecase
 }
 
-func NewUserHandler(router *fasthttprouter.Router, userUsecase domain.UserUsecase, userRedisRepository domain.UserRedisRepository) {
+func NewUserHandler(router *fasthttprouter.Router, userUsecase domain.UserUsecase) {
 	handler := &UserHandler{
 		userUsecase: userUsecase,
 	}
 
-	getByIINWithAuth := middleware.NewUserAuthMiddleware(userRedisRepository, handler.GetUserByIIN)
+	getByIINWithAuth := middleware.NewUserAuthMiddleware(userUsecase, handler.GetUserByIIN)
 	router.POST("/signup", handler.SignUp)
 	router.POST("/signin", handler.SignIn)
 	router.GET("/user/:iin", getByIINWithAuth)

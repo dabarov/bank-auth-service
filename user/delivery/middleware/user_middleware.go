@@ -10,12 +10,12 @@ import (
 )
 
 type userAuthMiddleware struct {
-	userRedisRepository domain.UserRedisRepository
+	userUsecase domain.UserUsecase
 }
 
-func NewUserAuthMiddleware(uRR domain.UserRedisRepository, next fasthttp.RequestHandler) fasthttp.RequestHandler {
+func NewUserAuthMiddleware(userUsecase domain.UserUsecase, next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	middleware := &userAuthMiddleware{
-		userRedisRepository: uRR,
+		userUsecase: userUsecase,
 	}
 	return func(ctx *fasthttp.RequestCtx) {
 
@@ -52,7 +52,7 @@ func NewUserAuthMiddleware(uRR domain.UserRedisRepository, next fasthttp.Request
 func (u *userAuthMiddleware) FindToken(token string, iin string) bool {
 	key := fmt.Sprintf("user:%s", iin)
 
-	value, err := u.userRedisRepository.GetValue(key)
+	value, err := u.userUsecase.GetValue(key)
 	if err != nil {
 		return false
 	}
@@ -74,7 +74,7 @@ func (u *userAuthMiddleware) ParseToken(token string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("failed to extract token metadata, unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(u.userRedisRepository.GetSecret()), nil
+		return []byte(u.userUsecase.GetSecret()), nil
 	})
 
 	if err != nil {

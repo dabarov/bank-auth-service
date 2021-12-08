@@ -55,3 +55,11 @@ func (u *userUsecase) GetUserByIIN(ctx context.Context, iin string) ([]byte, err
 	responseJSON, jsonErr := json.Marshal(user)
 	return responseJSON, jsonErr
 }
+
+func (u *userUsecase) GetValue(key string) (string, error) {
+	return u.userRedisRepository.GetValue(key)
+}
+
+func (u *userUsecase) GetSecret() string {
+	return u.userRedisRepository.GetSecret()
+}
