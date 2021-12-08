@@ -50,6 +50,6 @@ func main() {
 	redisRepository := redis.NewUserRedisRepository(client, redistimeout, redissecret)
 	userUsecase := usecase.NewUserUsecase(dbRepository, redisRepository)
 	router := fasthttprouter.New()
-	handler.NewUserHandler(router, userUsecase)
+	handler.NewUserHandler(router, userUsecase, redisRepository)
 	log.Fatal(fasthttp.ListenAndServe(":"+httpport, router.Handler))
 }

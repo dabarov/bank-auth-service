@@ -26,5 +26,6 @@ type UserDBRepository interface {
 type UserRedisRepository interface {
 	GetAccessToken(ctx context.Context, iin string) (string, error)
 	InsertToken(token string, iin string) error
-	ParseToken(token string) (int64, error)
+	GetValue(key string) (string, error)
+	GetSecret() string
 }
