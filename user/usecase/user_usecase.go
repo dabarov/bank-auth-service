@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/dabarov/bank-auth-service/domain"
 )
@@ -25,7 +26,8 @@ func (u *userUsecase) SignUp(ctx context.Context, user *domain.User) error {
 	if InvalidField(user.Login) || InvalidField(user.Password) {
 		return domain.ErrEmptyField
 	}
-	return u.userDBRepository.SignUp(ctx, user)
+	err := u.userDBRepository.SignUp(ctx, user)
+	return err
 }
 
 func (u *userUsecase) SignIn(ctx context.Context, login string, password string) (string, error) {
@@ -39,8 +41,17 @@ func (u *userUsecase) SignIn(ctx context.Context, login string, password string)
 	}
 
 	token, redisErr := u.userRedisRepository.GetAccessToken(ctx, iin)
-	if redisErr != nil {
-		return token, redisErr
+	return token, redisErr
+}
+
+func (u *userUsecase) GetUserByIIN(ctx context.Context, iin string) ([]byte, error) {
+	if InvalidIIN(iin) {
+		return []byte{}, domain.ErrIINIncorect
 	}
-	return token, nil
+	user, err := u.userDBRepository.GetUserByIIN(ctx, iin)
+	if err != nil {
+		return []byte{}, err
+	}
+	responseJSON, jsonErr := json.Marshal(user)
+	return responseJSON, jsonErr
 }

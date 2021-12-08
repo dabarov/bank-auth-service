@@ -37,3 +37,11 @@ func (uPR *userPostgresqlRepository) SignIn(ctx context.Context, login string, p
 	}
 	return currentUser.IIN, nil
 }
+
+func (uPR *userPostgresqlRepository) GetUserByIIN(ctx context.Context, iin string) (*domain.User, error) {
+	var user *domain.User
+	if notFound := uPR.Conn.Where(&domain.User{IIN: iin}).First(&user).Error; notFound != nil {
+		return user, domain.ErrUserDoesntExist
+	}
+	return user, nil
+}

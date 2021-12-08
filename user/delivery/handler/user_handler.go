@@ -19,6 +19,7 @@ func NewUserHandler(router *fasthttprouter.Router, userUsecase domain.UserUsecas
 	}
 	router.POST("/signup", handler.SignUp)
 	router.POST("/signin", handler.SignIn)
+	router.GET("/user/:iin", handler.GetUserByIIN)
 }
 
 func (u *UserHandler) SignUp(ctx *fasthttp.RequestCtx) {
@@ -46,4 +47,16 @@ func (u *UserHandler) SignIn(ctx *fasthttp.RequestCtx) {
 	}
 
 	ctx.Response.Header.Set("auth", token)
+}
+
+func (u *UserHandler) GetUserByIIN(ctx *fasthttp.RequestCtx) {
+	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	user, err := u.UserUsecase.GetUserByIIN(ctx, iin)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", err)
+		return
+	}
+	ctx.Response.Header.Set("Content-Type", "application/json")
+	ctx.Write(user)
 }
