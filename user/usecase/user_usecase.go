@@ -56,10 +56,10 @@ func (u *userUsecase) GetUserByIIN(ctx context.Context, iin string) ([]byte, err
 	return responseJSON, jsonErr
 }
 
-func (u *userUsecase) GetValue(key string) (string, error) {
+func (u *userUsecase) GetRedisValue(key string) (string, error) {
 	return u.userRedisRepository.GetValue(key)
 }
 
-func (u *userUsecase) GetSecret() string {
+func (u *userUsecase) GetRedisSecret() string {
 	return u.userRedisRepository.GetSecret()
 }

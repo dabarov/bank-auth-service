@@ -52,7 +52,7 @@ func NewUserAuthMiddleware(userUsecase domain.UserUsecase, next fasthttp.Request
 func (u *userAuthMiddleware) FindToken(token string, iin string) bool {
 	key := fmt.Sprintf("user:%s", iin)
 
-	value, err := u.userUsecase.GetValue(key)
+	value, err := u.userUsecase.GetRedisValue(key)
 	if err != nil {
 		return false
 	}
@@ -74,7 +74,7 @@ func (u *userAuthMiddleware) ParseToken(token string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("failed to extract token metadata, unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(u.userUsecase.GetSecret()), nil
+		return []byte(u.userUsecase.GetRedisSecret()), nil
 	})
 
 	if err != nil {
