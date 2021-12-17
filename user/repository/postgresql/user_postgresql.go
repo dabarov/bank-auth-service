@@ -18,12 +18,15 @@ func NewUserPostgresqlRepository(Conn *gorm.DB) domain.UserDBRepository {
 
 func (uPR *userPostgresqlRepository) SignUp(ctx context.Context, user *domain.User) error {
 	var emptyUser *domain.User
-	if notFound := uPR.Conn.Where(&domain.User{Login: user.Login}).First(&emptyUser).Error; notFound == nil {
+	if notFound := uPR.Conn.Where(&domain.User{Login: user.Login}).First(&emptyUser).Error; notFound != nil {
+	} else {
 		return domain.ErrLoginTaken
 	}
-	if notFound := uPR.Conn.Where(&domain.User{IIN: user.IIN}).First(&emptyUser).Error; notFound == nil {
+	if notFound := uPR.Conn.Where(&domain.User{IIN: user.IIN}).First(&emptyUser).Error; notFound != nil {
+	} else {
 		return domain.ErrIINTaken
 	}
+
 	if err := uPR.Conn.Create(&user).Error; err != nil {
 		return err
 	}
