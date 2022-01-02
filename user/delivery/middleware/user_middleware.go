@@ -30,24 +30,21 @@ func NewUserAuthMiddleware(userUsecase domain.UserUsecase, next fasthttp.Request
 		token, err := middleware.ExtractToken(ctx)
 		if err != nil {
 			log.Printf("Extract token error: %v", err)
-			ctx.SetStatusCode(fasthttp.StatusMovedPermanently)
-			ctx.Response.Header.Add("Location", "/login")
+			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			return
 		}
 
 		iin, err := middleware.ParseToken(token)
 		if err != nil {
 			log.Printf("Parse token error: %v", err)
-			ctx.SetStatusCode(fasthttp.StatusMovedPermanently)
-			ctx.Response.Header.Add("Location", "/login")
+			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			return
 		}
 
 		ok := middleware.FindToken(token, iin)
 		if !ok {
 			log.Printf("Getting token failed")
-			ctx.SetStatusCode(fasthttp.StatusMovedPermanently)
-			ctx.Response.Header.Add("Location", "/login")
+			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			return
 		}
 
