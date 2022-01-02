@@ -13,6 +13,14 @@ type userAuthMiddleware struct {
 	userUsecase domain.UserUsecase
 }
 
+func NewCORSMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+	return func(ctx *fasthttp.RequestCtx) {
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
+		ctx.Response.Header.Set("Access-Control-Allow-Headers", "*")
+		next(ctx)
+	}
+}
+
 func NewUserAuthMiddleware(userUsecase domain.UserUsecase, next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	middleware := &userAuthMiddleware{
 		userUsecase: userUsecase,

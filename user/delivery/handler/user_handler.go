@@ -20,9 +20,13 @@ func NewUserHandler(router *fasthttprouter.Router, userUsecase domain.UserUsecas
 	}
 
 	getByIINWithAuth := middleware.NewUserAuthMiddleware(userUsecase, handler.GetUserByIIN)
-	router.POST("/signup", handler.SignUp)
-	router.POST("/signin", handler.SignIn)
-	router.GET("/user/:iin", getByIINWithAuth)
+	corsMiddlewareForGetByIIN := middleware.NewCORSMiddleware(getByIINWithAuth)
+	corsMiddlewareForSignIn := middleware.NewCORSMiddleware(handler.SignIn)
+	corsMiddlewareForSignUp := middleware.NewCORSMiddleware(handler.SignUp)
+
+	router.POST("/signup", corsMiddlewareForSignUp)
+	router.POST("/signin", corsMiddlewareForSignIn)
+	router.GET("/user/:iin", corsMiddlewareForGetByIIN)
 }
 
 func (u *UserHandler) SignUp(ctx *fasthttp.RequestCtx) {
