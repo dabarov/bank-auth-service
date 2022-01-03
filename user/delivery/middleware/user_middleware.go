@@ -15,8 +15,9 @@ type userAuthMiddleware struct {
 
 func NewCORSMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
-		ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
-		ctx.Response.Header.Set("Access-Control-Allow-Headers", "*")
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
+		ctx.Response.Header.Set("Access-Control-Expose-Headers", "Set-Cookie")
 		next(ctx)
 	}
 }
