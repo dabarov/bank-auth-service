@@ -44,7 +44,29 @@ func (u *userUsecase) SignIn(ctx context.Context, login string, password string)
 	return token, redisErr
 }
 
-func (u *userUsecase) GetUserByIIN(ctx context.Context, iin string) ([]byte, error) {
+func (u *userUsecase) GetUserByIIN(ctx context.Context, requestedIIN string, currentUserIIN string) ([]byte, error) {
+	if InvalidIIN(requestedIIN) || InvalidIIN(currentUserIIN) {
+		return []byte{}, domain.ErrIINIncorect
+	}
+
+	currentUser, currentErr := u.userDBRepository.GetUserByIIN(ctx, currentUserIIN)
+	if currentErr != nil {
+		return []byte{}, currentErr
+	}
+
+	if currentUser.Role != domain.Admin_role && currentUserIIN != requestedIIN {
+		return []byte{}, domain.ErrNoAccessToRequestedIIN
+	}
+
+	user, err := u.userDBRepository.GetUserByIIN(ctx, requestedIIN)
+	if err != nil {
+		return []byte{}, err
+	}
+	responseJSON, jsonErr := json.Marshal(user)
+	return responseJSON, jsonErr
+}
+
+func (u *userUsecase) GetUser(ctx context.Context, iin string) ([]byte, error) {
 	if InvalidIIN(iin) {
 		return []byte{}, domain.ErrIINIncorect
 	}
