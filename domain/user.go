@@ -13,8 +13,8 @@ type User struct {
 }
 
 var (
-	admin_role = "admin"
-	user_role  = "user"
+	Admin_role string = "admin"
+	User_role  string = "user"
 )
 
 type UserUsecase interface {
