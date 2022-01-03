@@ -8,8 +8,14 @@ type User struct {
 	IIN       string `json:"iin"`
 	Login     string `json:"login"`
 	Password  string `json:"password"`
+	Role      string `json:"role"`
 	CreatedAt string `json:"created_at"`
 }
+
+var (
+	admin_role = "admin"
+	user_role  = "user"
+)
 
 type UserUsecase interface {
 	SignUp(ctx context.Context, user *User) error
