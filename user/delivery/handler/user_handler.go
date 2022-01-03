@@ -20,13 +20,16 @@ func NewUserHandler(router *fasthttprouter.Router, userUsecase domain.UserUsecas
 	}
 
 	getByIINWithAuth := middleware.NewUserAuthMiddleware(userUsecase, handler.GetUserByIIN)
+	getUserWithAuth := middleware.NewUserAuthMiddleware(userUsecase, handler.GetUserByIIN)
 	corsMiddlewareForGetByIIN := middleware.NewCORSMiddleware(getByIINWithAuth)
+	corsMiddlewareForGetUser := middleware.NewCORSMiddleware(getUserWithAuth)
 	corsMiddlewareForSignIn := middleware.NewCORSMiddleware(handler.SignIn)
 	corsMiddlewareForSignUp := middleware.NewCORSMiddleware(handler.SignUp)
 
 	router.POST("/signup", corsMiddlewareForSignUp)
 	router.POST("/signin", corsMiddlewareForSignIn)
 	router.GET("/user/:iin", corsMiddlewareForGetByIIN)
+	router.GET("/user", corsMiddlewareForGetUser)
 }
 
 func (u *UserHandler) SignUp(ctx *fasthttp.RequestCtx) {
@@ -59,8 +62,21 @@ func (u *UserHandler) SignIn(ctx *fasthttp.RequestCtx) {
 }
 
 func (u *UserHandler) GetUserByIIN(ctx *fasthttp.RequestCtx) {
-	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
-	user, err := u.userUsecase.GetUserByIIN(ctx, iin)
+	currentUserIIN := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
+	requestedIIN := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	user, err := u.userUsecase.GetUserByIIN(ctx, requestedIIN, currentUserIIN)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", err)
+		return
+	}
+	ctx.Response.Header.Set("Content-Type", "application/json")
+	ctx.Write(user)
+}
+
+func (u *UserHandler) GetUser(ctx *fasthttp.RequestCtx) {
+	iin := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
+	user, err := u.userUsecase.GetUser(ctx, iin)
 	if err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", err)
