@@ -20,7 +20,8 @@ var (
 type UserUsecase interface {
 	SignUp(ctx context.Context, user *User) error
 	SignIn(ctx context.Context, login string, password string) (string, error)
-	GetUserByIIN(ctx context.Context, iin string) ([]byte, error)
+	GetUserByIIN(ctx context.Context, requestedIIN string, currentUserIIN string) ([]byte, error)
+	GetUser(ctx context.Context, iin string) ([]byte, error)
 	GetRedisValue(key string) (string, error)
 	GetRedisSecret() string
 }
