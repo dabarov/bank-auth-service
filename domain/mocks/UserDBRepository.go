@@ -3,8 +3,8 @@ package mocks
 import (
 	"context"
 
-	domain "github.com/dabarov/bank-auth-service/domain"
-	mock "github.com/stretchr/testify/mock"
+	"github.com/dabarov/bank-auth-service/domain"
+	"github.com/stretchr/testify/mock"
 )
 
 type UserDBRepository struct {
@@ -44,14 +44,14 @@ func (_m *UserDBRepository) SignIn(ctx context.Context, login string, password s
 	return r0, r1
 }
 
-func (_m *UserDBRepository) GetUserByIIN(ctx context.Context, iin string) ([]byte, error) {
+func (_m *UserDBRepository) GetUserByIIN(ctx context.Context, iin string) (*domain.User, error) {
 	ret := _m.Called(ctx, iin)
 
-	var r0 []byte
-	if rf, ok := ret.Get(0).(func(context.Context, string) []byte); ok {
+	var r0 *domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.User); ok {
 		r0 = rf(ctx, iin)
 	} else {
-		r0 = ret.Get(0).([]byte)
+		r0 = ret.Get(0).(*domain.User)
 	}
 
 	var r1 error
