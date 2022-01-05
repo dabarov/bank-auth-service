@@ -7,7 +7,7 @@ import (
 
 	"github.com/dabarov/bank-auth-service/domain"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 type userRedisRepository struct {
@@ -29,11 +29,11 @@ func (u *userRedisRepository) GetAccessToken(ctx context.Context, iin string) (s
 	accessTokenClaims["iin"] = iin
 	accessTokenClaims["iat"] = time.Now().Unix()
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
-
 	signedToken, err := accessToken.SignedString([]byte(u.secret))
 	if err != nil {
 		return signedToken, err
 	}
+	fmt.Println([]byte(u.secret))
 
 	if err := u.InsertToken(signedToken, iin); err != nil {
 		return signedToken, err
@@ -44,11 +44,11 @@ func (u *userRedisRepository) GetAccessToken(ctx context.Context, iin string) (s
 
 func (u *userRedisRepository) InsertToken(token string, iin string) error {
 	key := fmt.Sprintf("user:%s", iin)
-	return u.redisClient.Set(key, token, u.timeout).Err()
+	return u.redisClient.Set(context.Background(), key, token, u.timeout).Err()
 }
 
 func (u *userRedisRepository) GetValue(key string) (string, error) {
-	return u.redisClient.Get(key).Result()
+	return u.redisClient.Get(context.Background(), key).Result()
 }
 
 func (u *userRedisRepository) GetSecret() string {
