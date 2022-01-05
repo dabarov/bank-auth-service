@@ -11,7 +11,7 @@ import (
 	"github.com/dabarov/bank-auth-service/user/repository/postgresql"
 	"github.com/dabarov/bank-auth-service/user/repository/redis"
 	"github.com/dabarov/bank-auth-service/user/usecase"
-	go_redis "github.com/go-redis/redis"
+	go_redis "github.com/go-redis/redis/v8"
 	"github.com/valyala/fasthttp"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
