@@ -22,3 +22,15 @@
 - [x] Обернуть приложение в Docker
 - [x] Запускать оба сервиса через docker compose
 - [x] Написать unit тесты для сервиса авторизации
+
+## Использованные технологии
+
+ - [PostgreSQL](https://www.postgresql.org/)
+ - [Redis](https://redis.io/)
+ - [Docker](https://www.docker.com/)
+ - [GORM](https://gorm.io/)
+ - [fasthttp](https://github.com/valyala/fasthttp)
+ - [fasthttprouter](https://github.com/buaazp/fasthttprouter)
+ - [sqlmock](https://github.com/DATA-DOG/go-sqlmock)
+ - [redismock](https://github.com/go-redis/redismock)
+ - [testify](https://github.com/stretchr/testify)
