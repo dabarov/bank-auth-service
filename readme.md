@@ -29,6 +29,7 @@
  - [Redis](https://redis.io/)
  - [Docker](https://www.docker.com/)
  - [GORM](https://gorm.io/)
+ - [go-clean-arch](https://github.com/bxcodec/go-clean-arch)
  - [fasthttp](https://github.com/valyala/fasthttp)
  - [fasthttprouter](https://github.com/buaazp/fasthttprouter)
  - [sqlmock](https://github.com/DATA-DOG/go-sqlmock)
