@@ -17,7 +17,7 @@ func NewCORSMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
-		ctx.Response.Header.Set("Access-Control-Expose-Headers", "Set-Cookie")
+		ctx.Response.Header.Set("Access-Control-Allow-Headers", "Content-Type, access-control-allow-origin, access-control-allow-headers, X-Custom-Header")
 		next(ctx)
 	}
 }
@@ -72,6 +72,7 @@ func (u *userAuthMiddleware) ExtractToken(ctx *fasthttp.RequestCtx) (token strin
 		err = fmt.Errorf("authorization header not found")
 		return
 	}
+	err = nil
 	return
 }
 
