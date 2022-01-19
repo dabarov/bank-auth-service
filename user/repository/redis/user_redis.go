@@ -33,7 +33,6 @@ func (u *userRedisRepository) GetAccessToken(ctx context.Context, iin string) (s
 	if err != nil {
 		return signedToken, err
 	}
-	fmt.Println([]byte(u.secret))
 
 	if err := u.InsertToken(signedToken, iin); err != nil {
 		return signedToken, err
