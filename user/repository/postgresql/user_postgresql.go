@@ -13,7 +13,9 @@ type userPostgresqlRepository struct {
 
 func NewUserPostgresqlRepository(Conn *gorm.DB) domain.UserDBRepository {
 	Conn.AutoMigrate(&domain.User{})
-	Conn.Create(&domain.User{Login: "admin", Password: "admin", IIN: "000000000000", Role: domain.Admin_role})
+	if err := Conn.Where(&domain.User{Login: "admin"}).First(&domain.User{}).Error; err != nil {
+		Conn.Create(&domain.User{Login: "admin", Password: "admin", IIN: "000000000000", Role: domain.Admin_role})
+	}
 	return &userPostgresqlRepository{Conn: Conn}
 }
 
